@@ -1,0 +1,103 @@
+run:
+  timeout: 5m
+
+linters:
+  enable-all: true
+  disable:
+    # deprecated
+    - execinquery # deprecated 1.58.0
+    - gomnd # deprecated 1.58.0
+    # unwanted
+    - cyclop
+    - depguard
+    - dupl
+    - err113
+    - exhaustruct
+    - forcetypeassert
+    - funlen
+    - gomoddirectives
+    - gosec
+    - inamedparam
+    - ireturn
+    - maintidx
+    - mnd
+    - musttag
+    - nestif
+    - nonamedreturns
+    - paralleltest
+    - varnamelen
+    - wsl
+
+linters-settings:
+  gci:
+    custom-order: true
+    sections:
+      - standard
+      - localModule
+      - default
+  gocognit:
+    # minimal code complexity to report, 30 by default
+    min-complexity: 180
+  goconst:
+    # Minimum occurrences of constant string count to trigger issue.
+    min-occurrences: 25
+    # Ignore test files.
+    ignore-tests: true
+  gocyclo:
+    # minimal code complexity to report, 30 by default
+    min-complexity: 100
+  gofumpt:
+    extra-rules: true
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+      - shadow
+  revive:
+    rules:
+      # defaults
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: empty-block
+      - name: error-naming
+      - name: error-return
+      - name: error-strings
+      - name: errorf
+      - name: exported
+      - name: increment-decrement
+      - name: indent-error-flow
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: redefines-builtin-id
+      - name: superfluous-else
+      - name: time-naming
+      - name: unexported-return
+      - name: unreachable-code
+      - name: unused-parameter
+      - name: var-declaration
+      - name: var-naming
+      # additionals
+      - name: confusing-naming
+      - name: import-alias-naming
+      - name: import-shadowing
+      - name: unhandled-error
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+        tfsdk: snake
+
+issues:
+  exclude-rules:
+    - text: "github.com/jeremmfr/terraform-provider-junos/internal"
+      linters:
+        - wrapcheck
+    - path: "internal/providersdk/"
+      linters:
+        - goconst
+    - text: "string `description \"` has "
+      linters:
+        - goconst

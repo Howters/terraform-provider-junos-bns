@@ -1,0 +1,36 @@
+name: Docs
+on: [push, pull_request]
+jobs:
+  website:
+    name: Website files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: List resource files and Test Website Files exists
+        run: |
+          missing=""
+          for resource in $(ls internal/*/resource_*.go | grep -v "_test.go$" | cut -d'/' -f3 | cut -d'.' -f1 | sed 's/^resource_//' ) ; do \
+          if [[ ! -f docs/resources/${resource}.md ]] ; then \
+          missing+="${resource} " ; \
+          fi ; \
+          done
+          if [[ ${missing} != "" ]] ; then \
+          echo "Missing documentation for resource ${missing}" ; exit 1 ; \
+          fi
+      - name: List data_source files and Test Website Files exists
+        run: |
+          missing=""
+          for datasource in $(ls internal/*/data_source_*.go | grep -v "_test.go$" | cut -d'/' -f3 | cut -d'.' -f1 | sed 's/^data_source_//' ) ; do \
+          if [[ ! -f docs/data-sources/${datasource}.md ]] ; then \
+          missing+="${datasource} " ; \
+          fi ; \
+          done
+          if [[ ${missing} != "" ]] ; then \
+          echo "Missing documentation for data_source ${missing}" ; exit 1 ; \
+          fi
+      - name: Check if too many level in list of arguments for resource or data_source
+        run: |
+          if [[ $(grep -r "^ \{3,\}\(\*\|-\) " docs/* | wc -l) -gt 0 ]] ; then \
+          echo "Too many level of arugments in docs" ; grep -nr "^ \{3,\}\(\*\|-\)" docs/* ; exit 1 ; \
+          fi
